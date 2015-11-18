@@ -1,0 +1,6 @@
+<delete>
+	<table> StockBarang </table>
+	<filter>
+		harga=5000
+	</filter>
+</delete>

@@ -1,0 +1,9 @@
+<READ>
+	<table> StockBarang </table>
+	<columns>
+		nama,produsen,harga
+	</columns>
+	<filter>
+		produsen='mishubasha'
+	</filter>
+</READ>

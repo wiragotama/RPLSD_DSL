@@ -1,0 +1,10 @@
+<update>
+	<table> StockBarang </table>
+	<filter>
+		harga=2000
+	</filter>
+	<instance>
+		harga=3000
+		jumlah=60
+	</instance>
+</update>
