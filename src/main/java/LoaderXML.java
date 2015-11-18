@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 public class LoaderXML {
 
     private Query query;
+    private boolean isError;
 
     /**
      *
@@ -27,6 +28,7 @@ public class LoaderXML {
     public LoaderXML(String filePath)
     {
         File file = new File(filePath);
+        this.isError = false;
         exploreDirectory(file, filePath);
     }
 
@@ -70,12 +72,14 @@ public class LoaderXML {
             Document doc = dBuilder.parse(file);
             if (doc.hasChildNodes()) { //explore the child node
                 this.query= buildQuery(doc.getChildNodes());
-                if (this.query==null)
-                    System.out.println("Syntax error");
-                else System.out.println(this.query);
+                if (this.query==null) {
+                    System.out.println("Error [Syntax error]");
+                    isError = true;
+                }
+                else isError = false;
             }
             else {
-                System.out.println("Syntax error");
+                System.out.println("Error [Syntax error]");
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -188,13 +192,13 @@ public class LoaderXML {
                         String keyValText = children.item(index.get(tags.indexOf("filter"))).getChildNodes().item(0).getTextContent();
                         String colText = children.item(index.get(tags.indexOf("columns"))).getChildNodes().item(0).getTextContent();
                         List<Pair<String, String>> filter = new ArrayList<Pair<String, String>>();
-                        String[] columns = colText.trim().split("\\r?','");
+                        List<String> columns = split(colText);
                         try {
                             filter = keyValueParse(keyValText);
                         } catch (Exception e) {
                             return null; //syntax error
                         }
-                        Query q = new Query(parent.getNodeName().toLowerCase(), tableText.trim(), Arrays.asList(columns), filter, true);
+                        Query q = new Query(parent.getNodeName().toLowerCase(), tableText.trim(), columns, filter, true);
                         return q;
                     }
                     else return null;
@@ -236,7 +240,7 @@ public class LoaderXML {
                 String str = lines[i].trim();
                 int idx = lines[i].trim().indexOf('=');
                 if (idx==-1) {
-                    throw new Exception("Syntax error");
+                    throw new Exception("Error [Syntax error]");
                 }
                 else {
                     String key = str.substring(0, idx);
@@ -247,5 +251,38 @@ public class LoaderXML {
             }
         }
         return result;
+    }
+
+    public Query getQuery()
+    {
+        return this.query;
+    }
+
+    public boolean getErrorFlag()
+    {
+        return this.isError;
+    }
+
+    /**
+     * Split string by comma
+     * @param str
+     * @return list of string
+     */
+    private List<String> split(String str)
+    {
+        List<String> retVal = new ArrayList<String>();
+        StringBuffer val = new StringBuffer("");
+        int i = 0;
+        while (i!=str.length()) {
+            if (str.charAt(i)==',' && !val.equals("")) {
+                retVal.add(val.toString());
+                val = new StringBuffer("");
+            }
+            else if (str.charAt(i)!=' ' && str.charAt(i)!='\n' && str.charAt(i)!='\t') {
+                val.append(str.charAt(i));
+            }
+            i++;
+        }
+        return retVal;
     }
 }

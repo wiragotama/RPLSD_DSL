@@ -1,0 +1,9 @@
+<insert>
+	<table> StockBarang </table>
+	<instance>
+		nama='panci256'
+		produsen='mishubasha'
+		harga='wiraganteng'
+		inStock=50
+	</instance>
+</insert>
